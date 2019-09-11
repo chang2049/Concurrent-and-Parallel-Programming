@@ -22,7 +22,7 @@ public class TestCache {
         System.out.println("执行代码块/方法");
 
         Factorizer f = new Factorizer();
-        exerciseFactorizer(new Memoizer<Long,long[]>(f));
+        exerciseFactorizer(new Memoizer0<Long,long[]>(f));
         System.out.println(f.getCount());
 
         long endTime=System.currentTimeMillis();
@@ -381,5 +381,28 @@ class Memoizer<A, V> implements Computable<A, V> {
                 throw launderThrowable(e.getCause());
             }
         }
+    }
+}
+
+class Memoizer0<A, V> implements Computable<A, V> {
+    private final Map<A, V> cache = new ConcurrentHashMap<A, V>();
+    private final Computable<A, V> c;
+
+    public Memoizer0(Computable<A, V> c) {
+        this.c = c;
+    }
+
+    public V compute(A arg) throws InterruptedException {
+        V result=cache.computeIfAbsent(arg, (A argv) -> {
+            V re = null;
+            try {
+                re = c.compute(argv);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return re;
+        });
+
+        return cache.get(arg);
     }
 }

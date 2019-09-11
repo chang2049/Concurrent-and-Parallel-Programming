@@ -6,7 +6,7 @@
 
 2. It takes 0m7.274s
 
-3.  
+3.  same question as 2
 
 4.  MyAtomicInteger class:
 
@@ -23,7 +23,7 @@
    }
    ```
 
-5.  running the following programe by System.out.println(countPrimeFactorsParallel(5_000_000, 10));
+5. running the following program by System.out.println(countPrimeFactorsParallel(5_000_000, 10));
 
    get the result 18703729 and takes  0m0.962s
 
@@ -54,11 +54,11 @@
 
 6. No. It has to be synchronized as multiple threads will read and write count
 
-7. Same result without much difference in time. It should be declared as final
+7. Same result without much difference in time. It should be declared as final to make sure it hold the reference to same object
 
 # Exercise 2.2
 
-1. It won't work if volatile is removed, as volatile guarantees the visibility to all threads, which means other threads will always get the updated cache while one thread is writing cache.
+1. It won't work if volatile is removed, as volatile guarantees the visibility to all threads, which means other threads will always get the updated cache while one thread is hodling the lock.
 2. final cannot be removed, final decalration makes sure the object is immutable once the instance is constructed
 
 # Exercise 2.3
@@ -147,16 +147,18 @@
    }
    ```
 
-5.  
+5. 
 
    ```java
-   @Histogram2 
+   /**Histogram2 
+   **/
    public synchronized int[] getBins(){
    	return counts.clone();
    }
    // To avoid escape of counts, getBins() return a copy of counts. Since getBins is sychronized, all the others thread trying to access this instance will be suspended. It gives a fixed snapshot
    
-   @Histogram3
+   /**Histogram3
+   **/
    public int[] getBins(){
      int[] countsCopy = new int[counts.length];
      for(int i = 0; i<counts.length;i++){
@@ -166,7 +168,8 @@
    }
    // In the process of copying counts to countCopy, the thread will hold a specific AtomicInteger object lock in each loop while all the other AtomicInteger objects are still accessible and edible to others threads. It gives a live view of the bins
    
-   @Histogram4
+   /**Histogram4
+   **/
    public int[] getBins(){
      int[] countsCopy = new int[counts.length()];
      for(int i = 0; i<counts.length();i++){
@@ -174,7 +177,7 @@
      }
      return countsCopy;
    }
-   // It's very similar to Histogram3 in the copying.It also gives a live view of the bins
+   // Other threads may hold the lock in the gap of counts.get() being called. It also gives a live view of the bins
    ```
 
 6.  
@@ -247,10 +250,44 @@
      }
    }
    ```
+   
 2. Yes, the number of calls to the factorizer is 115 000. The execution time takes 17399ns.
+
 3. The factorizer called 143733 times, and it takes 9586ns. 
+
 4. The factorizer called 116086 times, and it takes 8950ns.
+
 5. The factorizer called 115000 times, and it takes 8987ns.
+
 6. The factorizer called 115000 times, and it takes 8909ns.
 
+7.  The factorizer called 115000 times, and it takes 7762ns.
+
+   ```java
+   class Memoizer0<A,V> implements Computable<A,V>{
+       private final Map<A, V> cache
+               = new ConcurrentHashMap<A, V>();
+   
+       private final Computable<A, V> c;
+   
+       public Memoizer0(Computable<A, V> c) {this.c = c;}
+   
+       public V compute(A arg) throws InterruptedException {
+           final AtomicReference<V> vr = new AtomicReference<V>();
+           V f = cache.computeIfAbsent(arg, (A argv) -> {
+               try {
+                   vr.set(c.compute(argv));
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               return vr.get();
+           });
+   
+           return vr.get();
+   
+       }
+   }
+   ```
+
+   
 

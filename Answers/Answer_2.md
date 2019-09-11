@@ -247,6 +247,10 @@
      }
    }
    ```
-2.
+2. Yes, the number of calls to the factorizer is 115 000. The execution time takes 17399ns.
+3. The factorizer called 143733 times, and it takes 9586ns. 
+4. The factorizer called 116086 times, and it takes 8950ns.
+5. The factorizer called 115000 times, and it takes 8987ns.
+6. The factorizer called 115000 times, and it takes 8909ns.
 
 

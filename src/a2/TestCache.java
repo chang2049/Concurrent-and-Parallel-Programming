@@ -18,11 +18,15 @@ interface Computable<A, V> {
 
 public class TestCache {
     public static void main(String[] args) throws InterruptedException {
+        long startTime=System.currentTimeMillis();
+        System.out.println("执行代码块/方法");
 
         Factorizer f = new Factorizer();
-        exerciseFactorizer(new Memoizer2<Long,long[]>(f));
+        exerciseFactorizer(new Memoizer<Long,long[]>(f));
         System.out.println(f.getCount());
 
+        long endTime=System.currentTimeMillis();
+        System.out.println("程序运行时间： "+(endTime-startTime)+"ns");
 //        Computable<Long, long[]> factorizer = new Factorizer(),
 //                cachingFactorizer = new Memoizer1<Long, long[]>(factorizer);
 //

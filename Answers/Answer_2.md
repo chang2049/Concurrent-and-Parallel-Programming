@@ -252,5 +252,34 @@
 4. The factorizer called 116086 times, and it takes 8950ns.
 5. The factorizer called 115000 times, and it takes 8987ns.
 6. The factorizer called 115000 times, and it takes 8909ns.
-..
+
+7.  The factorizer called 115000 times, and it takes 7762ns.
+
+   ```java
+   class Memoizer0<A,V> implements Computable<A,V>{
+       private final Map<A, V> cache
+               = new ConcurrentHashMap<A, V>();
+   
+       private final Computable<A, V> c;
+   
+       public Memoizer0(Computable<A, V> c) {this.c = c;}
+   
+       public V compute(A arg) throws InterruptedException {
+           final AtomicReference<V> vr = new AtomicReference<V>();
+           V f = cache.computeIfAbsent(arg, (A argv) -> {
+               try {
+                   vr.set(c.compute(argv));
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               return vr.get();
+           });
+   
+           return vr.get();
+   
+       }
+   }
+   ```
+
+   
 

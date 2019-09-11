@@ -121,6 +121,36 @@ public class TestCache {
     }
 }
 
+/**
+ *Memoizer5, modern variant of Memoizer4 replace future task
+ * computeIfAbsent with direct operation
+ * @author Chang
+ */
+class Memoizer0<A,V> implements Computable<A,V>{
+    private final Map<A, V> cache
+            = new ConcurrentHashMap<A, V>();
+
+    private final Computable<A, V> c;
+
+    public Memoizer0(Computable<A, V> c) {
+        this.c = c;
+    }
+
+    public V compute(A arg) throws InterruptedException {
+        final AtomicReference<V> vr = new AtomicReference<V>();
+        V f = cache.computeIfAbsent(arg, (A argv) -> {
+            try {
+                vr.set(c.compute(argv));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return vr.get();
+        });
+
+        return vr.get();
+
+    }
+}
 
 /**
  * Initial cache attempt using HashMap and synchronization;
@@ -156,6 +186,7 @@ class Memoizer1<A, V> implements Computable<A, V> {
  * @author Brian Goetz and Tim Peierls
  */
 class Memoizer2<A, V> implements Computable<A, V> {
+
     private final Map<A, V> cache = new ConcurrentHashMap<A, V>();
     private final Computable<A, V> c;
 

@@ -252,5 +252,5 @@
 4. The factorizer called 116086 times, and it takes 8950ns.
 5. The factorizer called 115000 times, and it takes 8987ns.
 6. The factorizer called 115000 times, and it takes 8909ns.
-
+..
 

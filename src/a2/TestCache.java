@@ -124,7 +124,7 @@ public class TestCache {
 /**
  *Memoizer5, modern variant of Memoizer4 replace future task
  * computeIfAbsent with direct operation
- * @author Chang
+ * @author Chang 
  */
 class Memoizer0<A,V> implements Computable<A,V>{
     private final Map<A, V> cache
@@ -412,28 +412,5 @@ class Memoizer<A, V> implements Computable<A, V> {
                 throw launderThrowable(e.getCause());
             }
         }
-    }
-}
-
-class Memoizer0<A, V> implements Computable<A, V> {
-    private final Map<A, V> cache = new ConcurrentHashMap<A, V>();
-    private final Computable<A, V> c;
-
-    public Memoizer0(Computable<A, V> c) {
-        this.c = c;
-    }
-
-    public V compute(A arg) throws InterruptedException {
-        V result=cache.computeIfAbsent(arg, (A argv) -> {
-            V re = null;
-            try {
-                re = c.compute(argv);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return re;
-        });
-
-        return cache.get(arg);
     }
 }

@@ -1,6 +1,6 @@
 ## Exercise 3.1
 1. OS:   Mac OS X; 10.14.6; x86_64
-   
+  
    JVM:  Oracle Corporation; 11.0.2
    
    CPU:  2,6 GHz Intel Core i7; 8 "cores"
@@ -8,6 +8,9 @@
    Date: 2019-09-15T13:48:31+0200
    
    **Result: **
+   
+   Mark0
+   3627,0 ns
    
    Mark1
       0,0 ns
@@ -77,6 +80,8 @@
    multiply                             24,2 ns       0,06    8388608
    multiply                             24,5 ns       0,52   16777216
    
+   **Comments: ** Some of them are not reliable. There are several unexpected results. Like in mark5, 74,5 ns +/-   145,08       2048 shows very large variance and it may because it was interrupted by some system processes.
+   
 2. Result: 
 
    OS:   Mac OS X; 10.14.6; x86_64
@@ -96,10 +101,48 @@
    asin                                195,6 ns       3,36    2097152
    acos                                184,8 ns       2,52    2097152
    atan                                 44,1 ns       0,84    8388608
-
-
+   
+   
+   
+   OS:   Mac OS X; 10.14.6; x86_64
+   
+   JVM:  Oracle Corporation; 1.8.0_201
+   
+   CPU:  null; 4 "cores"
+   
+   Date: 2019-09-16T19:40:19+0200
+   
+   pow                                  71.9 ns       0.69    4194304
+   exp                                  53.3 ns       0.55    8388608
+   log                                  23.5 ns       1.32   16777216
+   sin                                  61.8 ns       0.55    4194304
+   cos                                  64.2 ns       2.42    4194304
+   tan                                  95.0 ns       9.00    4194304
+   asin                                233.0 ns      15.33    1048576
+   acos                                209.8 ns       2.64    2097152
+   atan                                 46.0 ns       0.25    8388608
+   
+   **Comments: ** The result is very similar to microbenchmark apart from that sin, cos and tan take way less time. It may be because of different jvm version, where may implement the computation in different way.
 
 ## Exercise 3.2
 
-1. 
-2. Uncontended lock                      2,9 ns       0,02  134217728
+1. For most cases, the variance tends to converge with the increasement of count. However it's not the case in Threads work, Thread create start and Thread create start join. There might be more factors influence the start of a lock and its work.
+
+2. OS:   Mac OS X; 10.14.6; x86_64
+
+   JVM:  Oracle Corporation; 11.0.2
+
+   CPU: 2,6 GHz Intel Core i7; 8 "cores"
+
+   Date: 2019-09-16T19:30:04+0200
+
+   hashCode()                            2,6 ns       0,02  134217728
+   Point creation                      109,4 ns       0,62    4194304
+   Thread's work                      5270,6 ns      68,41      65536
+   Thread create                      1086,2 ns      25,52     262144
+   Thread create start               53876,9 ns    1090,78       8192
+   Thread create start join          74809,6 ns    5873,36       4096
+   ai value = 1556420000
+   Uncontended lock                      5,1 ns       0,08   67108864
+
+   The result is very close to those showed in lecture. Some of them are with small variance which could be relatively plausible while others have a relatively large variance. But the large variance also comes with large number in time, so they can reflects the time sumption for each steps.

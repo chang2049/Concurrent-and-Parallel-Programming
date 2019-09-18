@@ -257,12 +257,26 @@ countParallelNLocal     14          4305.6 us      32.53         64
    It is not faster on my Intel i5 -based MacBook neither. 
 
 ## Exercise 3.4
-Memoizer1                    1586886686.4 ns 15052640.13          8
-Memoizer2                     827400261.7 ns 5926867.03         16
-Memoizer3                     735094117.5 ns 2251451.24         16
-Memoizer4                     736738235.9 ns 2635426.42         16
-Memoizer5                     749661592.1 ns 23483680.14         16
-Memoizer0                     738358804.2 ns 2225546.58         16
+OS:   Mac OS X; 10.14.6; x86_64
+
+JVM:  Oracle Corporation; 11.0.2
+
+CPU:  2,6 GHz Intel Core i7; 8 "cores"
+
+Date: 2019-09-18T18:32:30+0200
+
+1. Memoizer1                    1586886686.4 ns 15052640.13          8
+2. Memoizer2                     827400261.7 ns 5926867.03         16
+3. Memoizer3                     735094117.5 ns 2251451.24         16
+4. Memoizer4                     736738235.9 ns 2635426.42         16
+5. Memoizer5                     749661592.1 ns 23483680.14         16
+6. Memoizer0                     738358804.2 ns 2225546.58         16
+
+
+7. The best performer is Memoizer3 and Memoizer0, and the result generally agree with the lecture. However, Memoizer1takes particularly longer time than the rest, perhaps because it is non-scalable; Memoizer2 has better scalability but more duplicate works are done than 3,4,5,0. Compared with total computational cost, the difference of the minor duplicated work of Memoizer3 and improvements of Memoizer4,5,0 are not remarkable. 
+8. For each experiment, we calculate the primer factors on the same `range` and create a variable `overlap` say `overlap` = $\frac{1}{4}$ `range`, for every thread, threads[t] will claculate the prime factors from start = `range/threads* (t-1)` to `end = satrt + range/theads+overlap/threads`. 
+
+
 
 
 

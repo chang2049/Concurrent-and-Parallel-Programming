@@ -192,9 +192,9 @@ countParallelN      1             10555.8 us    1664.62         32
 countParallelNLocal     14          4305.6 us      32.53         64
    countParallelNLocal     15          4278.2 us      74.95         64
    
-2. ![Sheet 1](/Users/mac/IdeaProjects/PCPP/src/a3/Sheet 1.png)
+2. ![Sheet 1](Sheet 1.png)
 
-   ![Sheet 2](/Users/mac/IdeaProjects/PCPP/src/a3/Sheet 2.png)
+   ![Sheet 2](Sheet 2.png)
 
 3. Yes, they look plausible. Generally speaking, there is a positive correlation between the number of threads and the performance (shorter execution time). However, it can be found that when the numeber of threads gets much higher, the performance does not improve as greatly as it within lower digit change. The only surprise we have is when we use the countParallelN function, the performance of 2 threads cost more than than 1 thread, but the noise might due to computer background activity. 
 
@@ -257,7 +257,12 @@ countParallelNLocal     14          4305.6 us      32.53         64
    It is not faster on my Intel i5 -based MacBook neither. 
 
 ## Exercise 3.4
-
+Memoizer1                    1586886686.4 ns 15052640.13          8
+Memoizer2                     827400261.7 ns 5926867.03         16
+Memoizer3                     735094117.5 ns 2251451.24         16
+Memoizer4                     736738235.9 ns 2635426.42         16
+Memoizer5                     749661592.1 ns 23483680.14         16
+Memoizer0                     738358804.2 ns 2225546.58         16
 
 
 

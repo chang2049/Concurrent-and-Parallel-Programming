@@ -1,0 +1,20 @@
+# OS:   Mac OS X; 10.14.6; x86_64
+# JVM:  Oracle Corporation; 1.8.0_201
+# CPU:  null; 4 "cores"
+# Date: 2019-09-17T19:13:22+0200
+countSequential                    8988.8 us     190.61         32
+countParallelNLocal      1          9111.0 us     336.88         32
+countParallelNLocal      2          5666.8 us      92.11         64
+countParallelNLocal      3          4776.0 us      76.75         64
+countParallelNLocal      4          4359.9 us      98.03         64
+countParallelNLocal      5          4640.5 us      58.47         64
+countParallelNLocal      6          4653.2 us     402.74         64
+countParallelNLocal      7          4333.6 us      42.33         64
+countParallelNLocal      8          4567.9 us     565.53         64
+countParallelNLocal      9          4598.3 us     391.37         64
+countParallelNLocal     10          4416.3 us     156.70         64
+countParallelNLocal     11          4480.6 us     499.57         64
+countParallelNLocal     12          4234.2 us      99.37         64
+countParallelNLocal     13          4687.3 us     181.16         64
+countParallelNLocal     14          4336.3 us     115.38         64
+countParallelNLocal     15          4278.4 us      52.80         64

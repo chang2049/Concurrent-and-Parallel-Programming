@@ -1,4 +1,4 @@
-// For week 4
+package a3;// For week 4
 
 // sestoft@itu.dk * 2014-09-10, 2015-09-15
 
@@ -13,19 +13,19 @@ public class TestTimeThreads {
     SystemInfo();
     final Point myPoint = new Point(42, 39);
     Mark6("hashCode()", i -> myPoint.hashCode());
-    Mark6("Point creation", 
+    Mark6("Point creation",
           i -> {
             Point p = new Point(i, i);
             return p.hashCode();
           });
     final AtomicInteger ai = new AtomicInteger();
-    Mark6("Thread's work", 
+    Mark6("Thread's work",
           i -> {
             for (int j=0; j<1000; j++)
               ai.getAndIncrement();
             return ai.doubleValue();
           });
-    Mark6("Thread create", 
+    Mark6("Thread create",
           i -> {
             Thread t = new Thread(() -> {
                 for (int j=0; j<1000; j++)

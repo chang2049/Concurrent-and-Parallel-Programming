@@ -1,4 +1,4 @@
-// Crude wall clock timing utility, measuring time in seconds
+package a3;// Crude wall clock timing utility, measuring time in seconds
    
 class Timer {
   private long start = 0, spent = 0;

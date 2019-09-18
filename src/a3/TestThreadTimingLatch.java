@@ -1,4 +1,4 @@
-// For week 4
+package a3;// For week 4
 // sestoft@itu.dk * 2014-09-08
 
 import java.util.ArrayList;
@@ -100,10 +100,10 @@ class PrimeFactors {
 
 // Crude wall clock timing utility, measuring time in seconds
    
-class Timer {
-  private long start, spent = 0;
-  public Timer() { play(); }
-  public double check() { return (System.nanoTime()-start+spent)/1e9; }
-  public void pause() { spent += System.nanoTime()-start; }
-  public void play() { start = System.nanoTime(); }
-}
+//class Timer {
+//  private long start, spent = 0;
+//  public Timer() { play(); }
+//  public double check() { return (System.nanoTime()-start+spent)/1e9; }
+//  public void pause() { spent += System.nanoTime()-start; }
+//  public void play() { start = System.nanoTime(); }
+//}

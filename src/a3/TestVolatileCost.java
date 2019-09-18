@@ -1,4 +1,4 @@
-// For week 4
+package a3;// For week 4
 
 // Experiment with volatile and non-volatile
 // sestoft@itu.dk * 2012-10-21, 2015-09-15

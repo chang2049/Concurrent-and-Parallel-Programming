@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-
+import a3.TestTimeThreads;
 
 // Interface that represents a function from A to V
 interface Computable<A, V> {
@@ -18,15 +18,20 @@ interface Computable<A, V> {
 
 public class TestCache {
     public static void main(String[] args) throws InterruptedException {
-        long startTime=System.currentTimeMillis();
-        System.out.println("执行代码块/方法");
 
-        Factorizer f = new Factorizer();
-        exerciseFactorizer(new Memoizer0<Long,long[]>(f));
-        System.out.println(f.getCount());
+        for(int threadC = 1; threadC<17;threadC++){
+            final int count = threadC;
+            TestTimeThreads.Mark7("threads num"+Integer.toString(threadC), i ->{
+                Factorizer f = new Factorizer();
+                exerciseFactorizer(new Memoizer0<Long,long[]>(f),count);
+                return f.hashCode();
+                    }
+            );
+        }
 
-        long endTime=System.currentTimeMillis();
-        System.out.println("程序运行时间： "+(endTime-startTime)+"ns");
+//        exerciseFactorizer(new Memoizer0<Long,long[]>(f));
+//        System.out.println(f.getCount());
+
 //        Computable<Long, long[]> factorizer = new Factorizer(),
 //                cachingFactorizer = new Memoizer1<Long, long[]>(factorizer);
 //
@@ -48,14 +53,15 @@ public class TestCache {
 //        print(cachingFactorizer.compute(p));
 //        print(cachingFactorizer.compute(p));
     }
-    private static void exerciseFactorizer(Computable<Long, long[]> f) {
-        final int threadCount = 16;
-        final long start = 10_000_000_000L, range = 20_000L;
-        System.out.println(f.getClass());
+    private static void exerciseFactorizer(Computable<Long, long[]> f, int threadsCount) {
+        final int threadCount = threadsCount;
+        final long start = 10_000_000_000L, range = 2_000L;
+
+//        System.out.println(f.getClass());
         Thread[] threads = new Thread[threadCount];
         for(int t=0;t<threads.length;t++){
-            final long start2 = 10_000_020_000L+t*5000;
-            final long to2 = 10_000_039_999L+t*5000+1;
+            final long start2 = 10_000_002_000L+t*500;
+            final long to2 = 10_000_003_999L+t*500+1;
             threads[t] = new Thread(()->{
                 for(long i = start; i< start+range;i++){
                     try {

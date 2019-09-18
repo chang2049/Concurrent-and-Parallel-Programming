@@ -146,3 +146,119 @@
    Uncontended lock                      5,1 ns       0,08   67108864
 
    The result is very close to those showed in lecture. Some of them are with small variance which could be relatively plausible while others have a relatively large variance. But the large variance also comes with large number in time, so they can reflects the time sumption for each steps.
+## Exercise 3.3
+
+1. OS:   Mac OS X; 10.14.6; x86_64
+
+   JVM:  Oracle Corporation; 1.8.0_201
+
+   CPU:  3.1 GHz  Intel Core i5; 4 "cores"
+
+   Date: 2019-09-17T15:48:14+0200
+
+   countSequential      0             9038.3 us     203.99         32
+countParallelN      1             10555.8 us    1664.62         32
+   countParallelN      2              6820.1 us     924.70         64
+   countParallelN      3              5417.0 us     807.21         64
+   countParallelN      4              4677.7 us     341.92         64
+   countParallelN      5              4950.7 us     143.89         64
+   countParallelN      6              4600.5 us      48.60         64
+   countParallelN      7              4709.9 us     381.14         64
+   countParallelN      8              4446.0 us     143.11         64
+   countParallelN      9              4893.0 us     323.19         64
+   countParallelN     10              4531.5 us      80.55         64
+   countParallelN     11              4616.1 us     237.45         64
+   countParallelN     12              4395.7 us      38.25         64
+   countParallelN     13              4469.6 us      26.33         64
+   countParallelN     14              4511.5 us      86.39         64
+   countParallelN     15              4465.4 us      46.28         64
+   
+   
+   
+   countSequential           0         9043.7 us     168.51         32
+   countParallelNLocal      1          9013.1 us      48.70         32
+   countParallelNLocal      2          5586.8 us      74.00         64
+   countParallelNLocal      3          4984.0 us     466.76         64
+   countParallelNLocal      4          4323.0 us      36.43         64
+   countParallelNLocal      5          4836.7 us     468.65         64
+   countParallelNLocal      6          4456.6 us     119.01         64
+   countParallelNLocal      7          4343.8 us      54.32         64
+   countParallelNLocal      8          4292.2 us     163.83         64
+   countParallelNLocal      9          4370.8 us      82.58         64
+   countParallelNLocal     10          4403.6 us     160.17         64
+   countParallelNLocal     11          4307.2 us      76.20         64
+   countParallelNLocal     12          4225.2 us     131.56         64
+   countParallelNLocal     13          4293.6 us      58.47         64
+countParallelNLocal     14          4305.6 us      32.53         64
+   countParallelNLocal     15          4278.2 us      74.95         64
+   
+2. ![Sheet 1](/Users/mac/IdeaProjects/PCPP/src/a3/Sheet 1.png)
+
+   ![Sheet 2](/Users/mac/IdeaProjects/PCPP/src/a3/Sheet 2.png)
+
+3. Yes, they look plausible. Generally speaking, there is a positive correlation between the number of threads and the performance (shorter execution time). However, it can be found that when the numeber of threads gets much higher, the performance does not improve as greatly as it within lower digit change. The only surprise we have is when we use the countParallelN function, the performance of 2 threads cost more than than 1 thread, but the noise might due to computer background activity. 
+
+4. The result with AtomicLong shows as below:
+
+   OS:   Mac OS X; 10.14.6; x86_64
+
+   JVM:  Oracle Corporation; 1.8.0_201
+
+   CPU:  3.1 GHz  Intel Core i5; 4 "cores"
+
+   Date: 2019-09-17T17:01:14+0200
+
+   countSequential                    8323.5 us      20.62         32
+   countParallelNLocal      1          8976.3 us      91.11         32
+   countParallelNLocal      2          6032.1 us     653.85         64
+   countParallelNLocal      3          4740.8 us      66.32         64
+   countParallelNLocal      4          4405.1 us     137.17         64
+   countParallelNLocal      5          4645.9 us      37.23         64
+   countParallelNLocal      6          4494.8 us     101.51         64
+   countParallelNLocal      7          4307.9 us      31.87         64
+   countParallelNLocal      8          4244.3 us     124.14         64
+   countParallelNLocal      9          4371.3 us      88.85         64
+   countParallelNLocal     10          4338.3 us      52.13         64
+   countParallelNLocal     11          4325.8 us     173.69         64
+   countParallelNLocal     12          4278.3 us     198.86         64
+   countParallelNLocal     13          4421.3 us     120.75         64
+   countParallelNLocal     14          4415.6 us     308.41         64
+   countParallelNLocal     15          4621.6 us     479.14         64
+
+   It can be found that with low digit number of threads, the performance of AtomicLong is slightly better than LongCounter, but the improvement is not so visible when more threads are used. I think it would not be a bad idea to use adequate built-in classes and methods provided, since the result might be better, or  would not be worse.
+
+5. The result shows as below:
+
+   OS:   Mac OS X; 10.14.6; x86_64
+
+   JVM:  Oracle Corporation; 1.8.0_201
+
+   CPU:  3.1 GHz  Intel Core i5; 4 "cores"
+
+   Date: 2019-09-17T19:13:22+0200
+
+   countSequential                    8988.8 us     190.61         32
+   countParallelNLocal      1          9111.0 us     336.88         32
+   countParallelNLocal      2          5666.8 us      92.11         64
+   countParallelNLocal      3          4776.0 us      76.75         64
+   countParallelNLocal      4          4359.9 us      98.03         64
+   countParallelNLocal      5          4640.5 us      58.47         64
+   countParallelNLocal      6          4653.2 us     402.74         64
+   countParallelNLocal      7          4333.6 us      42.33         64
+   countParallelNLocal      8          4567.9 us     565.53         64
+   countParallelNLocal      9          4598.3 us     391.37         64
+   countParallelNLocal     10          4416.3 us     156.70         64
+   countParallelNLocal     11          4480.6 us     499.57         64
+   countParallelNLocal     12          4234.2 us      99.37         64
+   countParallelNLocal     13          4687.3 us     181.16         64
+   countParallelNLocal     14          4336.3 us     115.38         64
+   countParallelNLocal     15          4278.4 us      52.80         64
+
+   It is not faster on my Intel i5 -based MacBook neither. 
+
+## Exercise 3.4
+
+
+
+
+

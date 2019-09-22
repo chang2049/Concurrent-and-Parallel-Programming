@@ -1,4 +1,4 @@
-// Week 3
+package a4;// Week 3
 // sestoft@itu.dk * 2015-09-09
 
 import java.io.BufferedReader;

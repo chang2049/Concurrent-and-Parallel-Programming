@@ -1,9 +1,10 @@
-// Example 154 from page 123 of Java Precisely third edition (The MIT Press 2016)
+package a4;// Example 154 from page 123 of Java Precisely third edition (The MIT Press 2016)
 // Author: Peter Sestoft (sestoft@itu.dk)
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;  
-import java.util.function.Function;  
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 class Example154 {
   public static void main(String[] args) {
@@ -14,27 +15,31 @@ class Example154 {
       list4 = list1.insert(1, 12),                                // 9 12 13 0    
       list5 = list2.removeAt(3),                                  // 7 9 13       
       list6 = list5.reverse(),                                    // 13 9 7       
-      list7 = list5.append(list5);                                // 7 9 13 7 9 13
-    System.out.println(list1);
-    System.out.println(list2);
-    System.out.println(list3);
-    System.out.println(list4);
-    System.out.println(list5);
-    System.out.println(list6);
-    System.out.println(list7);
-    FunList<Double> list8 = list5.map(i -> 2.5 * i);              // 17.5 22.5 32.5
-    System.out.println(list8); 
-    double sum = list8.reduce(0.0, (res, item) -> res + item),    // 72.5
-       product = list8.reduce(1.0, (res, item) -> res * item);    // 12796.875
-    System.out.println(sum);
-    System.out.println(product);
-    FunList<Boolean> list9 = list5.map(i -> i < 10);              // true true false 
-    System.out.println(list9);
-    boolean allBig = list8.reduce(true, (res, item) -> res && item > 10);
-    System.out.println(allBig);
+      list7 = list5.append(list5),                                // 7 9 13 7 9 13
+      list10 = list7.removeFun(13);
+//    System.out.println(list7.count(x-> x==13? true: false));
+//    System.out.println(list2);
+//    System.out.println(list3);
+//    System.out.println(list4);
+//    System.out.println(list5);
+//    System.out.println(list6);
+//    System.out.println(list7);
+//    FunList<Double> list8 = list5.map(i -> 2.5 * i);              // 17.5 22.5 32.5
+//    System.out.println(list8);
+//    double sum = list8.reduce(0.0, (res, item) -> res + item),    // 72.5
+//       product = list8.reduce(1.0, (res, item) -> res * item);    // 12796.875
+//    System.out.println(sum);
+//    System.out.println(product);
+//    FunList<Boolean> list9 = list5.map(i -> i < 10);              // true true false
+//    System.out.println(list9);
+//    boolean allBig = list8.reduce(true, (res, item) -> res && item > 10);
+//    System.out.println(allBig);
+
+
+
   }
 
-  public static <T> FunList<T> cons(T item, FunList<T> list) { 
+  public static <T> FunList<T> cons(T item, FunList<T> list) {
     return list.insert(0, item);
   }
 }
@@ -90,6 +95,47 @@ class FunList<T> {
 
   public static <T> FunList<T> cons(T item, FunList<T> list) { 
     return list.insert(0, item);
+  }
+
+  public FunList<T> filter(Predicate<T> p){
+    return new FunList<T>(filter(p, this.first));
+  }
+  public static <T> Node<T> filter(Predicate<T> p, Node<T> xs){
+    return xs==null? null:
+            (p.test(xs.item)?new Node<T>(xs.item, filter(p,xs.next)):filter(p,xs.next));
+  }
+
+  public int count(Predicate<T> p){
+    return count(p, this.first);
+  }
+
+  public static <T> int count(Predicate<T> p,Node<T> xs){
+    int current = (p.test(xs.item))? 1:0 ;
+    return xs.next==null? current : current+count(p, xs.next);
+  }
+
+  public FunList<T> remove (T x){
+    return new FunList<T>(remove(x, this.first));
+  }
+
+  public static <T> Node<T> remove( T x, Node<T> xs){
+    return xs==null? null:
+            (xs.item==x?remove(x,xs.next):new Node<T>(xs.item,remove(x,xs.next)));
+  }
+
+  public FunList<T> removeFun(T x){
+    return this.filter(num ->num==x? false:true);
+  }
+
+  public static<T> FunList<T> flatten(FunList<FunList<T>> xss){
+
+    return  new FunList<T>(flatten(xss.first.item.first,xss.first.next));
+  }
+
+  public static<T> Node<T> flatten(Node<T> xs, Node<FunList<T>> xss){
+    return xs==null?
+            ((xss==null)?null:new Node<T>(xss.item.first.item,flatten(xss.item.first,xss.next))):
+            new Node<T>(xs.item,flatten(xs.next,xss));
   }
 
   public FunList<T> insert(int i, T item) { 

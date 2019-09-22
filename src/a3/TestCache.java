@@ -1,4 +1,4 @@
-package a2;// For week 2
+package a3;// For week 2
 
 // Code from Goetz et al 5.6, written by Brian Goetz and Tim Peierls.
 // Modifications by sestoft@itu.dk * 2014-09-08
@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import a3.TestTimeThreads;
 
 // Interface that represents a function from A to V
 interface Computable<A, V> {
@@ -165,7 +164,7 @@ public class TestCache {
  * computeIfAbsent with direct operation
  * @author Chang 
  */
-class Memoizer0<A,V> implements Computable<A,V>{
+class Memoizer0<A,V> implements Computable<A,V> {
     private final Map<A, V> cache
             = new ConcurrentHashMap<A, V>();
 

@@ -1,10 +1,7 @@
 package a4;// Example 154 from page 123 of Java Precisely third edition (The MIT Press 2016)
 // Author: Peter Sestoft (sestoft@itu.dk)
 
-import java.util.function.BiFunction;
-import java.util.function.Consumer;  
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 class Example154 {
   public static void main(String[] args) {
@@ -137,6 +134,42 @@ class FunList<T> {
             ((xss==null)?null:new Node<T>(xss.item.first.item,flatten(xss.item.first,xss.next))):
             new Node<T>(xs.item,flatten(xs.next,xss));
   }
+
+  public static<T> FunList<T> flattenFun(FunList<FunList<T>> xss){
+    final FunList<T> newList= new FunList<T>(null);
+    xss.reduce(newList,FunList::append);
+    return newList;
+  }
+
+  public <U> FunList<U> flatMap(Function<T,FunList<U>> f){
+    return new FunList<U>(flatMap(f, this.first));
+  }
+
+  public static<T,U> Node<U> flatMap(Function<T,FunList<U>> f, Node<T> xs){
+    if (xs == null){
+      return null;
+    }
+    else{
+      FunList<U> a = f.apply(xs.item);
+      FunList.append(a.first,flatMap(f,xs.next));
+      return a.first;
+    }
+  }
+
+  public <U> FunList<U> flatMapFun(Function<T,FunList<U>> f){
+    return flatten(this.map(f));
+  }
+
+
+  public FunList<T> scan(BinaryOperator<T> f){
+    return new FunList<T>(scan(f, this.first, this.getCount()));
+  }
+
+  public Node<T> scan(BinaryOperator<T> f, Node<T> xs, int i){
+    return  i==1? new Node<T>(xs.item,null): new Node<T>(xs.item,scan(f,xs.next,i-1));
+  }
+
+
 
   public FunList<T> insert(int i, T item) { 
     return new FunList<T>(insert(i, item, this.first));

@@ -5,12 +5,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.IntSummaryStatistics;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.IntToDoubleFunction;
 import java.util.stream.Collectors;
@@ -61,14 +57,14 @@ public class TestWordStream {
 //    Integer eCount = treeStream.map(i->i.get('e')==null?0:i.get('e')).reduce(0,Integer::sum);
 //    System.out.println(eCount);
 
-
+    List<String> abc = Arrays.asList("Acer", "acre", "care", "crea", "race");
     Map<Map<Character,Integer>,Set<String>> words= readWords(filename).collect(
-            Collectors.groupingByConcurrent(s -> letters(s),Collectors.mapping(s->s,Collectors.toSet()))
+            Collectors.groupingByConcurrent(s -> letters(s),Collectors.toSet())
     );
 
 
 
-        System.out.println((int) 'z');
+        System.out.println(words.size());
   }
 
   public static Stream<String> readWords(String filename) {

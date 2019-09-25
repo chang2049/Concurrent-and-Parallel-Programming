@@ -111,12 +111,16 @@
 
 # Exercise 4.2
 
-An infinite node list can be implemented in some class method rather than in constructor
+remove the `final` declaration of `next`, below the infNode is the start of infinite node list
 
 ```java
-public static Node<Integer> add(Node<Integer> currentNode){
-  return add(new Node<Integer>(0,currentNode));
-}
+Node<Integer> infNode = new Node<Integer>(0,null);
+final Node<Integer>[] nodeRecord = new Node[1];
+nodeRecord[0] =infNode;
+Stream.generate(()->{
+  nodeRecord[0].next = new Node<Integer>(0,null);
+  return nodeRecord[0]= nodeRecord[0].next;
+});
 ```
 
 # Exercise 4.3
@@ -248,10 +252,75 @@ treeStream.limit(100).forEach(System.out::println);
 Integer eCount = treeStream.map(i->i.get('e')==null?0:i.get('e')).reduce(0,Integer::sum);
   
 //11.
+  Map<Map<Character,Integer>,Set<String>> words= readWords(filename).collect(
+    Collectors.groupingBy(s -> letters(s),Collectors.toSet())
+  );
   
+ //12.
+    Map<Map<Character,Integer>,Set<String>> words= readWords(filename).collect(
+    Collectors.ggroupingByConcurrent(s -> letters(s),Collectors.toSet())
+  );
+  //it's faster than sequential one
 
 ```
 
 
 
-1. 
+# Exercise 4.5
+
+1. ` double sum = IntStream.rangeClosed(1,N).mapToDouble(i -> 1.0/i/i ).sum();`
+
+2.  Sum =  -0.0000000010000001
+
+   ```java
+   final String s = "sequential", p = "parallel";
+           Mark7(s, m->{
+               double sum = IntStream.rangeClosed(1,N).mapToDouble(i -> 1.0/i/i ).sum();
+               return s.hashCode();
+           });
+           Mark7(p, m->{
+               double sum = IntStream.rangeClosed(1,N).mapToDouble(i -> 1.0/N/N).parallel().sum();
+               return p.hashCode();
+           });
+   ```
+
+   sequential                   9628019119.1 ns 375701188.40          2
+   parallel                      901933954.6 ns 36621356.50          2
+
+3.  Sum =  -0.0000000090136514
+
+    classic loop sum             2656154510.0 ns 243396057.40          2
+
+   ```java
+   TestWordStream.Mark7("classic loop sum", item->{
+     double sum_l = 0;
+     for(double i =1; i<N+1;i++){
+       sum_l+=1/i/i;
+     }
+     return s.hashCode();
+   });
+   ```
+
+4. Sum =  -0.0000000010000001
+
+   ```java
+   int[] i = {0};
+   double sum_gen = Stream.generate(()->++i[0])
+     .mapToDouble(in>1./in/in).limit(N).sum();
+   System.out.printf("Sum = %20.16f%n", sum_gen - Math.PI*Math.PI/6);
+   
+   //sequential                  12223739424.6 ns 113944575.55          2
+   ```
+
+5.  ` double sum_gen = Stream.generate(()->++i[0]).mapToDouble(in->1./in/in).limit(N).parallel().sum();`
+
+   a few results:
+
+   Sum =   0.1043992195961652
+   Sum =   0.0108706588878920
+   Sum =   0.0885867507185620
+   Sum =   0.0015298871767406
+   Sum =   1.8853207421691531
+   Sum =   0.0024825149909982
+
+   Gnerate creates an unordered infinite stream and limit() didn't provide size, it's not safe to make it parallel

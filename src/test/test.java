@@ -5,8 +5,13 @@ import java.util.stream.Stream;
 
 public class test {
     public static void main(String[] args) {
-        String a = "hahah";
-        IntStream b = a.chars();
+        Node<Integer> infNode = new Node<Integer>(0,null);
+        final Node<Integer>[] nodeRecord = new Node[1];
+        nodeRecord[0] =infNode;
+        Stream.generate(()->{
+            nodeRecord[0].next = new Node<Integer>(0,null);
+            return nodeRecord[0]= nodeRecord[0].next;
+        });
 
     }
 
@@ -22,9 +27,6 @@ public class test {
 
 
 
-        public static Node<Integer> add(Node<Integer> currentNode){
-            return add(new Node<Integer>(0,currentNode));
-        }
 
 //        public static<U> Node<U> add(Node<U> currentNode){
 //            Node<U> newNode = new Node(0,null);

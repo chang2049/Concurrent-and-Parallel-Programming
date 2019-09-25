@@ -1,19 +1,26 @@
 package test;
 
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 public class test {
     public static void main(String[] args) {
-        a a_instance = new a(5);
-        a_instance.set(6);
+        String a = "hahah";
+        IntStream b = a.chars();
+
     }
 
     protected static class Node<U> {
         public final U item;
-        public final Node<U> next;
+        public  Node<U> next;
 
         public Node(U item, Node<U> next) {
             this.item = item;
             this.next = next;
         }
+    }
+
+
 
         public static Node<Integer> add(Node<Integer> currentNode){
             return add(new Node<Integer>(0,currentNode));
@@ -27,7 +34,7 @@ public class test {
 
 
     }
-}
+
 
 class a{
     private int a;

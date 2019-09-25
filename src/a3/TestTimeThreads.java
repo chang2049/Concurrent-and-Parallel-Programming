@@ -104,7 +104,7 @@ public class TestTimeThreads {
         sst += time * time;
         totalCount += count;
       }
-    } while (runningTime < 10 && count < Integer.MAX_VALUE/2);
+    } while (runningTime < 0.25 && count < Integer.MAX_VALUE/2);
     double mean = st/n, sdev = Math.sqrt((sst - mean*mean*n)/(n-1));
     System.out.printf("%-25s %15.1f ns %10.2f %10d%n", msg, mean, sdev, count);
     return dummy / totalCount;

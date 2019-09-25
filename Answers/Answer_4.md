@@ -166,3 +166,92 @@ public static Node<Integer> add(Node<Integer> currentNode){
    ```
 
    
+
+# Exercise 4.4
+
+```java
+//1.
+public static Stream<String> readWords(String filename) {
+  try {
+    BufferedReader reader = new BufferedReader(new FileReader(filename));
+    return reader.lines();
+  } catch (IOException exn) {
+    return Stream.<String>empty();
+  }
+}
+
+//2.
+readWords(filename).limit(100).forEach(System.out::println);
+
+//3.
+readWords(filename).filter(word ->word.length()>=22).forEach(System.out::println);
+
+//4.
+readWords(filename).filter(word ->word.length()>=22).limit(10).forEach(System.out::println);
+
+//5.
+public static boolean isPalindrome(String word) {
+  for(int i =0 ; i < word.length(); i++){
+    if (word.charAt(i)!= word.charAt(word.length()-1-i))
+      return false;
+  }
+  return true;
+}
+
+readWords(filename).filter(word -> isPalindrome(word)).forEach(System.out::println);
+//6.
+readWords(filename).parallel()
+  								 .filter(word -> isPalindrome(word))
+  								 .forEach(System.out::println);
+
+final BufferedReader reader = new BufferedReader(new FileReader(filename));
+Mark7("sequential", i ->{
+  reader.lines().filter(word -> isPalindrome(word));
+  return filename.hashCode();
+});
+Mark7("parallel", i ->{
+  reader.lines().parallel().filter(word -> isPalindrome(word));
+  return reader.hashCode();
+});
+/**
+Mark 7 is imported from previous exercise
+sequential                           23.0 ns       0.50   16777216
+parallel                             22.7 ns       0.58   16777216
+Parallel is not faster than sequential. Problems like testing palindrome are small enough that they are in danger of being swamped by the parallel splitting overhead.
+**/
+
+//7.
+
+IntStream iStream = readWords(filename).mapToInt(word -> word.length());
+IntSummaryStatistics stats = iStream.summaryStatistics();
+
+//8.
+System.out.println(stats);
+Map<Integer,List<String>> collectionWord = readWords(filename).collect(
+  Collectors.groupingBy(String::length));
+
+//9.
+public static Map<Character,Integer> letters(String s) {
+  final Map<Character,Integer> res = new TreeMap<>();
+  // TO DO: Implement properly
+  s = s.toLowerCase();
+  s.chars().mapToObj(i -> (char)i).forEach(i->{
+    res.putIfAbsent(i,0);
+    res.put(i,res.get(i)+1);
+  });
+  return res;
+
+Stream<Map<Character,Integer>> treeStream = readWords(filename).map(i->letters(i));
+treeStream.limit(100).forEach(System.out::println);
+
+//10.
+Integer eCount = treeStream.map(i->i.get('e')==null?0:i.get('e')).reduce(0,Integer::sum);
+  
+//11.
+  
+
+```
+
+
+
+1. 

@@ -1,3 +1,4 @@
+
 // A Java 8 streams (non-concurrent) version of the concurrent
 // pipeline in TestPipeline.java 
 // sestoft@itu.dk * 2014-09-23
@@ -31,7 +32,7 @@ public class TestStreams {
   public static void main(String[] args) throws IOException {
     Stream<String> urlStream 
       = Stream.of(urls); //.parallel();
-    Stream<Webpage> pageStream 
+    Stream<Webpage> pageStream
       = urlStream.flatMap(url -> makeWebPageOrNone(url, 200));
     Stream<Link> linkStream 
       = pageStream.flatMap(page -> makeLinks(page));

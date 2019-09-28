@@ -23,45 +23,65 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 // For regular expressions
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
-import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 public class TestPipeline {
+  private static final ExecutorService executor
+          = Executors.newCachedThreadPool();
   public static void main(String[] args) {
     runAsThreads();
   }
+  private static final String[] urlsPool =
+          { "http://www.itu.dk", "http://www.di.ku.dk", "http://www.miele.de",
+                  "http://www.ku.dk", "http://www.sspai.com", "http://www.ubi.com",
+                  "http://www.douban.com", "http://www.weibo.com", "http://www.google.com",
+                  "http://www.bilibili.com", "http://www.dtu.dk", "http://www.stackoverflow.com"
+          };
 
   private static void runAsThreads() {
     final BlockingQueue<String> urls = new OneItemQueue<String>();
     final BlockingQueue<Webpage> pages = new OneItemQueue<Webpage>();
     final BlockingQueue<Link> refPairs = new OneItemQueue<Link>();
-    Thread t1 = new Thread(new UrlProducer(urls));
-    Thread t2 = new Thread(new PageGetter(urls, pages));
-    Thread t3 = new Thread(new LinkScanner(pages, refPairs));
-    Thread t4 = new Thread(new LinkPrinter(refPairs));
-    t1.start(); t2.start(); t3.start(); t4.start(); 
+    final BlockingQueue<Link> uniPairs = new OneItemQueue<Link>();
+
+//    Thread t1 = new Thread(new UrlProducer(urls));
+//    Thread t2 = new Thread(new PageGetter(urls, pages));
+//    Thread t3 = new Thread(new LinkScanner(pages, refPairs));
+//    Thread t5 = new Thread(new UniQuifier(refPairs,uniPairs));
+//    Thread t4 = new Thread(new LinkPrinter(uniPairs));
+//    t1.start(); t2.start(); t3.start(); t5.start(); t4.start();
+
+
+    executor.submit(new UrlProducer(urls, Arrays.copyOfRange(urlsPool, 0, urlsPool.length/2)));
+    executor.submit(new UrlProducer(urls, Arrays.copyOfRange(urlsPool, urlsPool.length/2,urlsPool.length )));
+    executor.submit(new PageGetter(urls, pages));
+    executor.submit(new LinkScanner(pages, refPairs));
+    executor.submit(new UniQuifier<Link>(refPairs,uniPairs));
+    executor.submit(new LinkPrinter(uniPairs));
+
   }
 }
 
 class UrlProducer implements Runnable {
   private final BlockingQueue<String> output;
-
-  public UrlProducer(BlockingQueue<String> output) {
+  private final String[] urls;
+  public UrlProducer(BlockingQueue<String> output,String[] urls) {
     this.output = output;
+    this.urls = urls;
   }
 
   public void run() { 
-    for (int i=0; i<urls.length; i++)
+    for (int i=0; i<urls.length; i++){
       output.put(urls[i]);
-  }
+    }
 
-  private static final String[] urls = 
-  { "http://www.itu.dk", "http://www.di.ku.dk", "http://www.miele.de",
-    "http://www.microsoft.com", "http://www.amazon.com", "http://www.dr.dk",
-    "http://www.vg.no", "http://www.tv2.dk", "http://www.google.com",
-    "http://www.ing.dk", "http://www.dtu.dk", "http://www.bbc.co.uk"
-  };
+  }
 }
 
 class PageGetter implements Runnable {
@@ -76,10 +96,11 @@ class PageGetter implements Runnable {
   public void run() { 
     while (true) {
       String url = input.take();
-      //      System.out.println("PageGetter: " + url);
+//            System.out.println("PageGetter: " + url);
       try { 
         String contents = getPage(url, 200);
         output.put(new Webpage(url, contents));
+//        System.out.println(url+contents.length());
       } catch (IOException exn) { System.out.println(exn); }
     }
   }
@@ -124,6 +145,28 @@ class LinkScanner implements Runnable {
         String link = urlMatcher.group(1);
         output.put(new Link(page.url, link));
       }
+
+    }
+  }
+}
+
+class UniQuifier<T> implements Runnable{
+  private final BlockingQueue<T> input;
+  private final BlockingQueue<T> output;
+  private final Set<T> record = new HashSet<T>();
+
+  UniQuifier(BlockingQueue<T> input, BlockingQueue<T> output) {
+    this.input = input;
+    this.output = output;
+  }
+
+  public void run() {
+    while (true){
+      T link = input.take();
+      if (!record.contains(link)){
+        record.add(link);
+        output.put(link);
+      }
     }
   }
 }
@@ -137,8 +180,9 @@ class LinkPrinter implements Runnable {
 
   public void run() { 
     while (true) {
+
       Link link = input.take();
-      //      System.out.println("LinkPrinter: " + link.from);
+//            System.out.println("LinkPrinter: " + link.from);
       System.out.printf("%s links to %s%n", link.from, link.to);
     }
   }
@@ -158,6 +202,7 @@ class Link {
   public Link(String from, String to) {
     this.from = from;
     this.to = to;
+
   }
 
   // Override hashCode and equals so can be used in HashSet<Link>

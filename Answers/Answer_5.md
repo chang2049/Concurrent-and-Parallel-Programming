@@ -1,10 +1,19 @@
 # Exercise 5.1
 
 1. see result in "CachedThreadPool.txt"
+
 2. see result in "WorkStealingPool.txt"
+
 3. ![a5.png](a5.png)
 
-4. 
+4. The result looks reasonable.
+
+   * Consumed time decreases daramatily in the beginning and tend to be stable with slight fluctuation which is very similar to the result of explicit thread result, however, consumed time of multiple threads tend to increase in the end may because of increasement of thread's creation cost and reduce of each thread's computational cost. 
+   * In cachedThreadPool, there is also a increasing trend of task2(multi callable tasks), it may be because the task2 invoke the tasks at the same time and there might be the situations that several threads are waiting to get task from the queue.
+
+   * It shows that program will run faster when the number threads is multiple of number of cores.
+
+5. LongAdder makes task 1 run faster no remakale changes in task2, as task 2 uses a local counter for each task.
 
 
 
@@ -178,11 +187,12 @@
    executor.submit(new LinkScanner(pages, refPairs));
    executor.submit(new UniQuifier<Link>(refPairs,uniPairs));
    executor.submit(new LinkPrinter(uniPairs));
+   //The results are the same as when using threads
    ```
 
 4. FixedThreadPool of size 6 got the same result as before
 
-5. There is no print messages, it may be because the first tasks occupy the threads in the thread pool as them run forever. The left two tasks haven't been executed at all
+5. There is no print messages, it may be because the first 3 tasks occupy the threads in the thread pool as them run forever. The left two tasks haven't been executed at all
 
 6. same result in different order
 

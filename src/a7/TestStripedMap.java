@@ -14,9 +14,10 @@ import java.util.function.IntToDoubleFunction;
 public class TestStripedMap {
   public static void main(String[] args) {
     SystemInfo();
-    testAllMaps();    // Must be run with: java -ea TestStripedMap 
+//    testAllMaps();    // Must be run with: java -ea TestStripedMap
     exerciseAllMaps();
-    // timeAllMaps();
+//     timeAllMaps();
+
   }
 
   private static void timeAllMaps() {
@@ -437,8 +438,13 @@ class StripedMap<K,V> implements OurMap<K,V> {
   }
 
   public int size() {
-    // TO DO: IMPLEMENT
-    return 0;
+    int result = 0;
+    for(int i =0; i<sizes.length;i++){
+      synchronized (locks[i]){
+        result+= sizes[i];
+      }
+    }
+    return result;
   }
 
   // Put v at key k, or update if already present 
@@ -461,13 +467,48 @@ class StripedMap<K,V> implements OurMap<K,V> {
 
   // Put v at key k only if absent
   public V putIfAbsent(K k, V v) {
-    // TO DO: IMPLEMENT
-    return null;
+    final int h = getHash(k), stripe = h%lockCount;
+    if (sizes[stripe] > buckets.length/lockCount ){
+      reallocateBuckets();
+    }
+    synchronized (locks[stripe]){
+      final int hash = h%buckets.length;
+      final ItemNode<K,V> node = ItemNode.search(buckets[hash],k);
+      if (node != null) return node.v;
+      else {
+        buckets[hash] = new ItemNode<K,V>(k,v,buckets[hash]);
+        sizes[stripe]++;
+        return null;
+      }
+    }
   }
 
   // Remove and return the value at key k if any, else return null
   public V remove(K k) {
     // TO DO: IMPLEMENT
+    final int h = getHash(k), stripe = h%lockCount;
+    synchronized (locks[stripe]){
+      final int hash = h%buckets.length;
+      ItemNode<K,V> curr = buckets[hash];
+      if (curr == null) return  null;
+      else if (curr.k == k){
+        buckets[hash] = curr.next;
+        sizes[stripe]--;
+        return curr.v;
+      }
+      else {
+        ItemNode<K,V> prev;
+        while(curr.next != null){
+          prev = curr;
+          curr = curr.next;
+          if (curr.k == k){
+            sizes[stripe]--;
+            prev.next = curr.next;
+            return curr.v;
+          }
+        }
+      }
+    }
     return null;
   }
 
@@ -479,6 +520,20 @@ class StripedMap<K,V> implements OurMap<K,V> {
   // same stripe.
   public void forEach(Consumer<K,V> consumer) {
     // TO DO: IMPLEMENT
+    final int rounds = buckets.length/lockCount +1;
+    for(int stripe = 0; stripe < lockCount; stripe++){
+      synchronized (locks[stripe]){
+        for(int round = 0; round < rounds;round++){
+          int bucket = stripe + round*lockCount;
+          if( bucket>= buckets.length) continue;
+          ItemNode<K,V> curr = buckets[bucket];
+          while (curr != null){
+            consumer.accept(curr.k, curr.v);
+            curr = curr.next;
+          }
+        }
+      }
+    }
   }
 
   // First lock all stripes.  Then double bucket table size, rehash,
@@ -601,12 +656,19 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
   // Return value v associated with key k, or null
   public V get(K k) {
     // TO DO: IMPLEMENT
-    return null;
+    final ItemNode<K,V>[] bs = buckets;
+    final int h = getHash(k), stripe = h % lockCount, hash = h % bs.length;
+    final Holder<V> holder = new Holder<V>();
+    return sizes.get(stripe) != 0 && ItemNode.search(bs[hash], k, holder) ?
+           holder.get():null ;
   }
 
   public int size() {
     // TO DO: IMPLEMENT
-    return 0;
+    int result = 0;
+    for(int i = 0; i < lockCount; i++)
+      result+=sizes.get(i);
+    return result;
   }
 
   // Put v at key k, or update if already present.  The logic here has
@@ -636,18 +698,47 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
   // Put v at key k only if absent.  
   public V putIfAbsent(K k, V v) {
     // TO DO: IMPLEMENT
+    final int h = getHash(k), stripe = h % lockCount;
+    final Holder<V> old = new Holder<V>();
+    ItemNode<K,V>[] bs;
+    int afterSize;
+    synchronized (locks[stripe]){
+      bs = buckets;
+      final int hash = h % bs.length;
+      final ItemNode<K,V> node = bs[hash];
+      if (ItemNode.search(node,k,old)) return old.get();
+      bs[hash] = new ItemNode<K,V>(k, v, bs[hash].next);
+      afterSize = sizes.addAndGet(stripe,1 );
+    }
+    if (afterSize * lockCount > bs.length)
+      reallocateBuckets(bs);
     return null;
   }
 
   // Remove and return the value at key k if any, else return null
   public V remove(K k) {
-    // TO DO: IMPLEMENT
-    return null;
+    final int h = getHash(k), stripe = h % lockCount;
+    final Holder<V> old = new Holder<V>();
+    ItemNode<K,V>[] bs;
+    synchronized (locks[stripe]){
+      bs = buckets;
+      final int hash = h % bs.length;
+      final ItemNode<K,V> node = bs[hash];
+      ItemNode.delete(node,k,old);
+    }
+    return old.get();
   }
 
   // Iterate over the hashmap's entries one stripe at a time.  
   public void forEach(Consumer<K,V> consumer) {
-    // TO DO: IMPLEMENT
+    final ItemNode<K,V>[] bs = buckets;
+    for(ItemNode<K,V> itemNode : bs) {
+      ItemNode<K,V> node = itemNode;
+      while (node != null) {
+        consumer.accept(node.k, node.v);
+        node = node.next;
+      }
+    }
   }
 
   // Now that reallocation happens internally, do not do it externally

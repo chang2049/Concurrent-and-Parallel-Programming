@@ -13,9 +13,9 @@ import java.util.function.IntToDoubleFunction;
 
 public class TestStripedMap {
   public static void main(String[] args) {
-    SystemInfo();
-//    testAllMaps();    // Must be run with: java -ea TestStripedMap
-    exerciseAllMaps();
+//    SystemInfo();
+    testAllMaps();    // Must be run with: java -ea TestStripedMap
+//    exerciseAllMaps();
 //     timeAllMaps();
 
   }
@@ -707,7 +707,7 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
       final int hash = h % bs.length;
       final ItemNode<K,V> node = bs[hash];
       if (ItemNode.search(node,k,old)) return old.get();
-      bs[hash] = new ItemNode<K,V>(k, v, bs[hash].next);
+      bs[hash] = new ItemNode<K,V>(k, v, bs[hash]);
       afterSize = sizes.addAndGet(stripe,1 );
     }
     if (afterSize * lockCount > bs.length)
@@ -723,8 +723,9 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
     synchronized (locks[stripe]){
       bs = buckets;
       final int hash = h % bs.length;
-      final ItemNode<K,V> node = bs[hash];
-      ItemNode.delete(node,k,old);
+      ItemNode<K,V> node = bs[hash];
+      bs[hash] = ItemNode.delete(node,k,old);
+      if(old.get()!=null) sizes.getAndDecrement(stripe);
     }
     return old.get();
   }
@@ -732,8 +733,8 @@ class StripedWriteMap<K,V> implements OurMap<K,V> {
   // Iterate over the hashmap's entries one stripe at a time.  
   public void forEach(Consumer<K,V> consumer) {
     final ItemNode<K,V>[] bs = buckets;
-    for(ItemNode<K,V> itemNode : bs) {
-      ItemNode<K,V> node = itemNode;
+    for(int i = 0; i<bs.length; i++) {
+      ItemNode<K,V> node = bs[i];
       while (node != null) {
         consumer.accept(node.k, node.v);
         node = node.next;

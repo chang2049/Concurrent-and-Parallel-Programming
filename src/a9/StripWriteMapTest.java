@@ -1,21 +1,73 @@
 package a9;
 
-import java.util.concurrent.Executor;
+import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class StripWriteMapTest {
-    private static  final ExecutorService pool = Executors.newFixedThreadPool(16);
+    private final ExecutorService pool;
+    private final StripedWriteMap<Integer,String> stripMap;
+    private final CyclicBarrier barrier;
+    private final int threadCount;
 
-    public static void main(String[] args) {
-        new StripedWriteMap<Integer,String>(77, 7);
+    public static void main(String[] args) throws BrokenBarrierException, InterruptedException {
+        int[] numKeeper = new StripWriteMapTest(77,7,16).test();
+        int result =0;
+        for(int i =0;i<numKeeper.length;i++)
+            result+=numKeeper[i];
+
+        assert result==0 ;
     }
 
-    public static void testMap() {
+    public StripWriteMapTest(int bucketCount, int lockCount, int threadCount) {
+        barrier = new CyclicBarrier(threadCount+1);
+        stripMap = new StripedWriteMap<Integer,String>(bucketCount, lockCount);
+        pool =  Executors.newFixedThreadPool(threadCount);
+        this.threadCount = threadCount;
+    }
 
+    public int[] test() throws BrokenBarrierException, InterruptedException {
+        final int[] numKeeper = new int[threadCount];
+        final Thread[] threads = new Thread[threadCount];
+        for(int i =0;i<threads.length;i++){
+            final int thread =i;
+            threads[i] = new Thread(()->{
+                try {
+                    barrier.await();
+                    Random rand = new Random();
+                    int num = rand.nextInt(100);
+                    String str = String.valueOf(rand.nextInt(26)+65);
+                    if (!stripMap.containsKey(num)) numKeeper[thread]+=num;
+                    stripMap.put(num,str);
+                    num = rand.nextInt(100);
+                    str = String.valueOf(rand.nextInt(26)+65);
+                    if (stripMap.putIfAbsent(num,str)==null)
+                        numKeeper[thread]+=num;
+                    num = rand.nextInt(100);
+                    if(stripMap.remove(num)!=null)
+                        numKeeper[thread]-=num;
+                    barrier.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        for(Thread thread : threads){
+            pool.execute(thread);
+        }
+        barrier.await();
+        barrier.await();
+
+
+        return numKeeper;
     }
 }
+
 interface Consumer<K,V> {
     void accept(K k, V v);
 }

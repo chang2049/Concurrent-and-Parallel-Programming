@@ -23,5 +23,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jcip-annotations" level="application" />
   </component>
 </module>

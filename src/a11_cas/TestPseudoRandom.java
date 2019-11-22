@@ -1,4 +1,4 @@
-// For week 10
+package a11_cas;// For week 10
 // sestoft@itu.dk * 2014-11-12, 2015-11-03
 
 // Implementing simple (java.util.Random-style) pseudo-random number

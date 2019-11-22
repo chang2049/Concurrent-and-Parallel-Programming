@@ -24,5 +24,7 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="jcip-annotations" level="application" />
+    <orderEntry type="library" name="akka-actor" level="application" />
+    <orderEntry type="library" name="scala" level="application" />
   </component>
 </module>

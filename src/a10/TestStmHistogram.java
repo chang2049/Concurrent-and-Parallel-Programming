@@ -34,7 +34,7 @@ interface Histogram {
     void transferBins(Histogram hist);
 }
 
-class TestStmHistogram {
+public class TestStmHistogram {
     public static void main(String[] args) {
         countPrimeFactorsWithStmHistogram();
     }
@@ -70,6 +70,7 @@ class TestStmHistogram {
             startBarrier.await();
         } catch (Exception exn) {
         }
+        Timer timer = new Timer();
         int doCount = 0;
         try{
         while (doCount<200){
@@ -83,10 +84,11 @@ class TestStmHistogram {
             stopBarrier.await();
         } catch (Exception exn) {
         }
+        System.out.println(timer.check());
 //        dump(histogram);
         dump(total);
-        total.transferBins(total);
-        dump(total);
+//        total.transferBins(total);
+//        dump(total);
     }
 
     public static void dump(Histogram histogram) {

@@ -1,4 +1,4 @@
-// For week 10
+package a10;// For week 10
 // sestoft@itu.dk * 2014-11-05, 2015-10-14
 
 // Compile and run like this:

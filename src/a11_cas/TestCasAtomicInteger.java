@@ -1,4 +1,4 @@
-// For week 10 and 11
+package a11_cas;// For week 10 and 11
 // sestoft@itu.dk * 2014-11-12, 2015-11-03
 
 // Implementation of CAS in terms of lock, for describing its meaning,

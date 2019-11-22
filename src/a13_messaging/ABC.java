@@ -22,18 +22,35 @@ class DepositMessage implements Serializable {
 class PrintBalanceMessage implements Serializable {
     /* TODO */ }
 
+// -- ACTORS --------------------------------------------------
+class AccountActor extends UntypedActor {
+    /* TODO */
+}
 
-public class ABC { // Demo showing how things work: public static void main(String[] args) {
-    final ActorSystem system = ActorSystem.create("ABCSystem");
-    /* TODO (CREATE ACTORS AND SEND START MESSAGES) */
-    try {
-        System.out.println("Press return to inspect..."); System.in.read();
-        /* TODO (INSPECT FINAL BALANCES) */
-        System.out.println("Press return to terminate...");
-        System.in.read();
-    } catch(IOException e) { e.printStackTrace();
-    } finally {
-        system.shutdown();}
+class BankActor extends UntypedActor {
+    /* TODO */
+}
+
+class ClerkActor extends UntypedActor {
+    /* TODO */
+}
+
+public class ABC { // Demo showing how things work:
+    public static void main(String[] args) {
+        final ActorSystem system = ActorSystem.create("ABCSystem");
+        /* TODO (CREATE ACTORS AND SEND START MESSAGES) */
+        try {
+            System.out.println("Press return to inspect...");
+            System.in.read();
+            /* TODO (INSPECT FINAL BALANCES) */
+            System.out.println("Press return to terminate...");
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            system.shutdown();
+        }
+    }
 }
 
 

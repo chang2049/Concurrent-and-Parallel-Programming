@@ -1,4 +1,4 @@
-// COMPILE:
+package a13_messaging;// COMPILE:
 // javac -cp scala.jar:akka-actor.jar HelloWorld.java 
 // RUN:
 // java -cp scala.jar:akka-actor.jar:akka-config.jar:. HelloWorld

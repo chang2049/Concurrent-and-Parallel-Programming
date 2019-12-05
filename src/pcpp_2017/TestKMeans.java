@@ -1,26 +1,15 @@
 package pcpp_2017;// Various implementations of k-means clustering
 // sestoft@itu.dk * 2017-01-04
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.function.IntFunction;
 import java.util.function.Function;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 public class TestKMeans {
   public static void main(String[] args) {
@@ -30,7 +19,7 @@ public class TestKMeans {
     final int[] initialPoints = GenerateData.randomIndexes(n, k);
     for (int i=0; i<3; i++) {
       timeKMeans(new KMeans1(points, k), initialPoints);
-      // timeKMeans(new KMeans1P(points, k), initialPoints);
+//       timeKMeans(new KMeans1P(points, k), initialPoints);
       // timeKMeans(new KMeans2(points, k), initialPoints);
       // timeKMeans(new KMeans2P(points, k), initialPoints);
       // timeKMeans(new KMeans2Q(points, k), initialPoints);
@@ -331,6 +320,8 @@ class Point {
   }
 
   public boolean almostEquals(Point that) {
+//    double a = this.x;
+//    double b =that.x;
     return almostEquals(this.x, that.x) && almostEquals(this.y, that.y);
   }
   

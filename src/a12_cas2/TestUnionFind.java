@@ -1,4 +1,4 @@
-// For week 12
+package a12_cas2;// For week 12
 // sestoft@itu.dk * 2014-11-20
 // rikj@itu.dk 2017-11-23
 

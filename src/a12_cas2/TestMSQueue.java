@@ -1,4 +1,4 @@
-// For week 12
+package a12_cas2;// For week 12
 // sestoft@itu.dk * 2014-11-16
 
 // Unbounded list-based lock-free queue by Michael and Scott 1996 (who

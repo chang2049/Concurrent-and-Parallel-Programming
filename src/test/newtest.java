@@ -1,25 +1,30 @@
 package test;
 
+import java.util.concurrent.CompletableFuture;
+
 public class newtest {
     public static void main(String[] args) {
-        class Solution {
-            public String solution(String S, int K) {
-                // write your code in Java SE 8
-                String[] week = {"Mon","Tue","Wed","Thu","Fri","Sat","Sun"};
-                int original = -1;
-                for(int i = 0; i < week.length; i++){
-                    if(S == week[i]){
-                        original = i;
-                        break;
-                    }
-                }
-                if(original == -1)
-                    throw new IllegalArgumentException("day doesn't exits");
-                int day_index = (original + K)/7;
-                return week[day_index];
-            }
-        }
+        Validator numericValidator =
+                new Validator((String s) -> s.matches("[a-z]+"));
+        boolean b1 = numericValidator.validate("aaaa"); Validator lowerCaseValidator =
+                new Validator((String s) -> s.matches("\\d+"));
+        boolean b2 = lowerCaseValidator.validate("bbbb");
+    }
+    public static class test{
+
     }
 
+}
+@FunctionalInterface
+interface ValidationStrategy {
+    boolean execute(String s);
+}
 
+class Validator {
+    private final ValidationStrategy strategy;
+    public Validator(ValidationStrategy v) {
+        this.strategy = v; }
+    public boolean validate(String s) {
+        return strategy.execute(s);
+    }
 }

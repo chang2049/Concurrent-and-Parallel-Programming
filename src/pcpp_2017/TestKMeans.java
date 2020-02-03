@@ -1,11 +1,9 @@
 package pcpp_2017;// Various implementations of k-means clustering
 // sestoft@itu.dk * 2017-01-04
 
-import java.util.Collections;
-import java.util.Random;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.function.IntFunction;
@@ -18,13 +16,13 @@ public class TestKMeans {
     final Point[] points = GenerateData.randomPoints(n);
     final int[] initialPoints = GenerateData.randomIndexes(n, k);
     for (int i=0; i<3; i++) {
-      timeKMeans(new KMeans1(points, k), initialPoints);
+//      timeKMeans(new KMeans1(points, k), initialPoints);
 //       timeKMeans(new KMeans1P(points, k), initialPoints);
-      // timeKMeans(new KMeans2(points, k), initialPoints);
-      // timeKMeans(new KMeans2P(points, k), initialPoints);
-      // timeKMeans(new KMeans2Q(points, k), initialPoints);
-      // timeKMeans(new KMeans2Stm(points, k), initialPoints);
-      // timeKMeans(new KMeans3(points, k), initialPoints);
+//       timeKMeans(new KMeans2(points, k), initialPoints);
+//       timeKMeans(new KMeans2P(points, k), initialPoints);
+//       timeKMeans(new KMeans2Q(points, k), initialPoints);
+       timeKMeans(new KMeans2Stm(points, k), initialPoints);
+//       timeKMeans(new KMeans3(points, k), initialPoints);
       // timeKMeans(new KMeans3P(points, k), initialPoints);
       System.out.println();
     }
@@ -234,7 +232,7 @@ class KMeans3 implements KMeans {
     this.points = points;
     this.k = k;
   }
-    
+
   public void findClusters(int[] initialPoints) {
     Cluster[] clusters = GenerateData.initialClusters(points, initialPoints, Cluster::new, Cluster[]::new);
     boolean converged = false;
@@ -242,13 +240,31 @@ class KMeans3 implements KMeans {
       iterations++;
       { // Assignment step: put each point in exactly one cluster
         final Cluster[] clustersLocal = clusters;  // For capture in lambda
-        // Map<Cluster, List<Point>> groups = ... TODO ...
-        // clusters = groups.entrySet().stream().map(...) ... TODO ...;
+         Map<Cluster, List<Point>> groups = Arrays.stream(points).parallel().collect(Collectors.groupingBy(
+                  p->{
+                   Cluster best = null;
+                   double dis = -1;
+                   for(Cluster c: clustersLocal)
+                     if(dis>p.sqrDist(c.mean) || best ==null){
+                       dis = p.sqrDist(c.mean);
+                       best = c;
+                     }
+                   return best;
+                 },
+                 Collectors.mapping(p->p,Collectors.toList())
+         ));
+         clusters = groups.entrySet().stream()
+                 .parallel()
+                 .map(kv->new Cluster(kv.getKey().mean,kv.getValue()))
+                 .toArray(Cluster[]::new);
       }
       { // Update step: recompute mean of each cluster
-        // Cluster[] newClusters = ... TODO ...
-        // converged = Arrays.equals(clusters, newClusters);
-        // clusters = newClusters;
+         Cluster[] newClusters =  Arrays.stream(clusters)
+                 .parallel()
+                 .map(c->c.computeMean())
+                 .toArray(Cluster[]::new);
+         converged = Arrays.equals(clusters, newClusters);
+         clusters = newClusters;
       }
     }
     this.clusters = clusters;

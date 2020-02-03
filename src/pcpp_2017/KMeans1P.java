@@ -48,10 +48,6 @@ public class KMeans1P implements KMeans {
                                 }
                             }
                             finalClusters[bestIDX].add(p);
-//                            synchronized (locks[bestIDX]){
-//                                finalClusters[bestIDX].add(p);
-//
-//                            }
                         }
                         return null;
                     });
